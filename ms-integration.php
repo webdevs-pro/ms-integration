@@ -76,5 +76,51 @@ class MS_Integration {
 
       return $redirect_to;
    }
+
+
+   /**
+    * Add admin notices after bulk actions.
+    *
+    * @since 1.0.0
+    *
+    * @return void
+    */
+   function bulk_action_notices() {
+      // exposed
+      if( ! empty( $_REQUEST[ 'bulk_exposed_properties' ] ) ) {
+
+         $count = (int) $_REQUEST[ 'bulk_exposed_properties' ];
+         // depending on ho much posts were changed, make the message different
+         $message = sprintf(
+            _n(
+               '%d property has been updated on services.',
+               '%d properties has been updated on services.',
+               $count
+            ),
+            $count
+         );
+   
+         echo "<div class=\"updated notice is-dismissible\"><p>{$message}</p></div>";
+      }
+
+      // removed
+      if( ! empty( $_REQUEST[ 'bulk_removed_properties' ] ) ) {
+
+         $count = (int) $_REQUEST[ 'bulk_removed_properties' ];
+         // depending on ho much posts were changed, make the message different
+         $message = sprintf(
+            _n(
+               '%d property has been removed from services.',
+               '%d properties has been removed from services.',
+               $count
+            ),
+            $count
+         );
+   
+         echo "<div class=\"updated notice is-dismissible\"><p>{$message}</p></div>";
+      }
+   
+   }
+
 }
 new MS_Integration();
