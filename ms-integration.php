@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.2.0
+ * Version: 0.2.1
  */
 
 
@@ -16,7 +16,6 @@ class MS_Integration {
       add_filter( 'page_row_actions', array( $this, 'add_custom_row_actions' ), 10, 2 );
       add_action( 'admin_init',  array( $this, 'fire_page_row_action' ) );
       add_filter( 'set_url_scheme', array( $this, 'remove_bulk_actions_query_params' ) );
-
    }
 
 
