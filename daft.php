@@ -1,5 +1,9 @@
 <?php
 
+if ( class_exists( 'Daft' ) ) {
+   return;
+}
+
 class Daft {
 
    public static function update_service( $post_ids = [] ) {
