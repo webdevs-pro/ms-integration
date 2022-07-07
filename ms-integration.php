@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.0.1
+ * Version: 0.0.2
  */
 
 
@@ -151,6 +151,13 @@ class MS_Integration {
       } else {
          update_post_meta( $post_id, 'publishd_on_services', '' );
       }
+
+      include( 'daft.php' );
+      Daft::update_service( (array) $post_id );
+
+      // include( 'my-home.php' );
+      // MyHome::update_service( (array) $post_id );
+
    }
 
 }
