@@ -70,11 +70,7 @@ class MS_Integration {
          $redirect_to = add_query_arg( 'bulk_removed_properties', count( $post_ids ), $redirect_to );
       }
 
-      include( 'daft.php' );
-      Daft::update_service( $post_ids );
-
-      // include( 'my-home.php' );
-      // MyHome::update_service( $post_ids );
+      $this->update_properties_on_services( $post_ids );
 
       return $redirect_to;
    }
@@ -117,6 +113,14 @@ class MS_Integration {
       }
    }
 
+
+   /**
+    * Add checkbox to publish section on property edit screen.
+    *
+    * @since 1.0.0
+    *
+    * @return void
+    */
    public function add_publish_meta_options( $post_obj ) {
       $value = get_post_meta( $post_obj->ID, 'publishd_on_services', true );
    
@@ -134,9 +138,15 @@ class MS_Integration {
          <?php
       }
    }
-   
-   
-   
+
+
+   /**
+    * Process propery publish/update actions.
+    *
+    * @since 1.0.0
+    *
+    * @return void
+    */
    public function extra_publish_meta_options_save( $post_id, $post, $update ) {
       if ( 'property' != $post->post_type ) {
          return;
@@ -152,12 +162,23 @@ class MS_Integration {
          update_post_meta( $post_id, 'publishd_on_services', '' );
       }
 
+      $this->update_properties_on_services( $post_id );
+   }
+
+
+   /**
+    * Update services.
+    *
+    * @since 1.0.0
+    *
+    * @return void
+    */
+   public function update_properties_on_services( $post_ids ) {
       include( 'daft.php' );
       Daft::update_service( (array) $post_id );
 
       // include( 'my-home.php' );
       // MyHome::update_service( (array) $post_id );
-
    }
 
 }
