@@ -15,7 +15,7 @@ class MS_Integration {
       add_action( 'save_post', array( $this, 'extra_publish_meta_options_save' ), 10 , 3) ;
       add_filter( 'page_row_actions', array( $this, 'add_custom_row_actions' ), 10, 2 );
       add_action( 'admin_init',  array( $this, 'fire_page_row_action' ) );
-      add_filter( 'set_url_scheme', 'remove_bulk_actions_query_params' );
+      add_filter( 'set_url_scheme', array( $this, 'remove_bulk_actions_query_params' ) );
 
    }
 
@@ -178,7 +178,7 @@ class MS_Integration {
     * @return void
     */
    public function update_properties_on_services( $post_ids ) {
-      include( 'daft.php' );
+      include_once( 'daft.php' );
       Daft::update_service( (array) $post_ids );
 
       // include( 'my-home.php' );
