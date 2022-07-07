@@ -137,6 +137,21 @@ class Daft {
             }
 
             // photos
+            $photos = get_post_meta( $post_id, 'REAL_HOMES_property_images' );
+            if ( $photos ) {
+               $photosElement = $XML->createElement( 'photos' );
+
+               foreach ( $photos as $photo_id ) {
+                  $photo_url = wp_get_attachment_url( $photo_id );
+
+                  if ( $photo_url ) {
+                     $photosElement->appendChild( $XML->createElement( 'photo', $photo_url ) );
+                  }
+               }
+               
+               $saleAdElement->appendChild( $photosElement );
+
+            }
 
 
 
