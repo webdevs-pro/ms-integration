@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.3.0
+ * Version: 0.3.1
  */
 
 
@@ -178,10 +178,10 @@ class MS_Integration {
     */
    public function update_properties_on_services( $post_ids ) {
       include_once( 'daft.php' );
-      Daft::update_service( (array) $post_ids );
+      MSIDaft::update_service( (array) $post_ids );
 
-      // include( 'my-home.php' );
-      // MyHome::update_service( (array) $post_ids );
+      include( 'myhome.php' );
+      MSIMyHome::update_service( (array) $post_ids );
    }
 
 

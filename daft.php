@@ -4,7 +4,7 @@
 //    return;
 // }
 
-class Daft {
+class MSIDaft {
 
    public static function update_service( $post_ids = [] ) {
 
