@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.3.1
+ * Version: 0.4.0
  */
 
 
@@ -63,6 +63,7 @@ class MS_Integration {
             update_post_meta( $post_id, 'published_on_services', 1 );
          }
          $redirect_to = add_query_arg( 'bulk_publishd_properties', count( $post_ids ), $redirect_to );
+         $this->update_properties_on_services( $post_ids, 'publish' );
       }
 
       // remove
@@ -71,9 +72,9 @@ class MS_Integration {
             update_post_meta( $post_id, 'published_on_services', '' );
          }
          $redirect_to = add_query_arg( 'bulk_removed_properties', count( $post_ids ), $redirect_to );
+         $this->update_properties_on_services( $post_ids, 'remove' );
       }
 
-      $this->update_properties_on_services( $post_ids );
 
       return $redirect_to;
    }
@@ -161,11 +162,12 @@ class MS_Integration {
    
       if ( isset( $_POST['published_on_services'] ) && $_POST['published_on_services'] == 1 ) {
          update_post_meta( $post_id, 'published_on_services', $_POST['published_on_services'] );
+         $this->update_properties_on_services( $post_id, 'publish' );
       } else {
          update_post_meta( $post_id, 'published_on_services', '' );
+         $this->update_properties_on_services( $post_id, 'remove' );
       }
 
-      $this->update_properties_on_services( $post_id );
    }
 
 
@@ -176,12 +178,18 @@ class MS_Integration {
     *
     * @return void
     */
-   public function update_properties_on_services( $post_ids ) {
+   public function update_properties_on_services( $post_ids, $action ) {
       include_once( 'daft.php' );
       MSIDaft::update_service( (array) $post_ids );
 
       include( 'myhome.php' );
-      MSIMyHome::update_service( (array) $post_ids );
+      if ( $action == 'publish' ) {
+         MSIMyHome::publish( (array) $post_ids );
+      }
+      if ( $action == 'remove' ) {
+         MSIMyHome::remove( (array) $post_ids );
+      }
+
    }
 
 
@@ -245,10 +253,10 @@ class MS_Integration {
 
       if ( isset( $_REQUEST['property_services_action'] ) && $_REQUEST['property_services_action'] == 'publish'  ) {
          update_post_meta( $post_id, 'published_on_services', 1 );
-         $this->update_properties_on_services( $post_id );
+         $this->update_properties_on_services( $post_id, 'publish' );
       } elseif ( isset( $_REQUEST['property_services_action'] ) &&  $_REQUEST['property_services_action'] == 'remove' ) {
          update_post_meta( $post_id, 'published_on_services', '' );
-         $this->update_properties_on_services( $post_id );
+         $this->update_properties_on_services( $post_id, 'remove' );
       }
 
       add_filter( 'removable_query_args', array( $this, 'remove_page_row_action_query_params' ) );
