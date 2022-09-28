@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.4.0
+ * Version: 0.4.1
  */
 
 
@@ -364,3 +364,12 @@ add_action( 'pre_get_posts', function($query) {
 
 
 
+require 'plugin-update-checker/plugin-update-checker.php';
+$cpfeUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+	'https://github.com/webdevs-pro/ms-integration/',
+	__FILE__,
+	'ms-integration'
+);
+
+//Set the branch that contains the stable release.
+$cpfeUpdateChecker->setBranch('main');

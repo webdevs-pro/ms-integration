@@ -8,7 +8,7 @@ class MSIDaft {
 
    public static function update_service( $post_ids = [] ) {
 
-      $XML = new DomDocument('1.0', 'ISO-8859-1'); 
+      $XML = new DomDocument( '1.0', 'ISO-8859-1' ); 
 
       //add daft node
       $daftElement = $XML->appendChild( $XML->createElement( 'daft' ) );
@@ -43,8 +43,6 @@ class MSIDaft {
          $salesElement = $daftElement->appendChild( $XML->createElement( 'sales' ) );
          foreach ( $sales_posts as $post_id ) {
             $saleAdElement = $XML->createElement( 'sale_ad' );
-
-            // building_name
 
             // address
             $saleAdElement->appendChild( $XML->createElement( 'address', get_the_title( $post_id ) ) );
@@ -100,7 +98,15 @@ class MSIDaft {
 
             // agent
             $agent_post_id = get_post_meta( $post_id, 'REAL_HOMES_agents', true );
+            error_log( "agent_post_id\n" . print_r( $agent_post_id, true ) . "\n" );
             if ( $agent_post_id ) {
+               $daft_agent_id = get_post_meta( $agent_post_id, 'daft-agent-id', true );
+               error_log( "daft_agent_id\n" . print_r( $daft_agent_id, true ) . "\n" );
+               if ( ! $daft_agent_id ) {
+                  continue;
+               }
+               $saleAdElement->appendChild( $XML->createElement( 'agent_id', $daft_agent_id ) );
+
                // phone1, phone2
                $agent_phone_1_meta = get_post_meta( $agent_post_id, 'REAL_HOMES_mobile_number', true );
                $agent_phone_2_meta = get_post_meta( $agent_post_id, 'REAL_HOMES_office_number', true );
@@ -112,6 +118,8 @@ class MSIDaft {
                } elseif ( ! $agent_phone_1_meta && $agent_phone_2_meta ) {
                   $saleAdElement->appendChild( $XML->createElement( 'phone1', $agent_phone_2_meta ) );
                }
+               $daft_agent_id = get_post_meta( $post_id, 'daft-agent-id', true );
+
 
                // contact_name
                $contact_name = get_the_title( $agent_post_id );
@@ -165,6 +173,6 @@ class MSIDaft {
       $XML->formatOutput = true;
 
       // $XML->saveXML();
-      $XML->save('../raycooke.xml');
+      $XML->save( '../raycooke.xml' );
    }
 }
