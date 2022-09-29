@@ -77,6 +77,8 @@ class MSIDaft {
             if ( $price_meta ) {
                $saleAdElement->appendChild( $XML->createElement( 'price', $price_meta ) );
             }
+            $saleAdElement->appendChild( $XML->createElement( 'selling_type', 'private-treaty' ) );
+            $saleAdElement->appendChild( $XML->createElement( 'price_type', 'region' ) );
 
             // bathroom_number
             $bathrooms_number_meta = get_post_meta( $post_id, 'REAL_HOMES_property_bathrooms', true );
@@ -98,10 +100,8 @@ class MSIDaft {
 
             // agent
             $agent_post_id = get_post_meta( $post_id, 'REAL_HOMES_agents', true );
-            error_log( "agent_post_id\n" . print_r( $agent_post_id, true ) . "\n" );
             if ( $agent_post_id ) {
                $daft_agent_id = get_post_meta( $agent_post_id, 'daft-agent-id', true );
-               error_log( "daft_agent_id\n" . print_r( $daft_agent_id, true ) . "\n" );
                if ( ! $daft_agent_id ) {
                   continue;
                }
