@@ -55,9 +55,9 @@ class MSIDaft {
                $saleAdElement->appendChild( $XML->createElement( 'longitude', $coordinates_arr[1] ) );
             }
 
-            // country
-            $country = get_post_meta( $post_id, 'daft-property-country', true ) ?: '1';
-            $saleAdElement->appendChild( $XML->createElement( 'country', $country ) );
+            // county
+            $county = get_post_meta( $post_id, 'daft-property-county', true ) ?: '1';
+            $saleAdElement->appendChild( $XML->createElement( 'county', $county ) );
 
 
             // area
