@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.4.2
+ * Version: 0.4.3
  */
 
 
