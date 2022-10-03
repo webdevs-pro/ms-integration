@@ -59,6 +59,14 @@ class MSIDaft {
             $county = get_post_meta( $post_id, 'daft-property-county', true ) ?: '1';
             $saleAdElement->appendChild( $XML->createElement( 'county', $county ) );
 
+            // property_type
+            $property_type = get_post_meta( $post_id, 'daftie-property-type', true ) ?: '1';
+            $saleAdElement->appendChild( $XML->createElement( 'property_type', $property_type ) );
+
+            // house_type
+            $house_type = get_post_meta( $post_id, 'daftie-house-type', true ) ?: '1';
+            $saleAdElement->appendChild( $XML->createElement( 'house_type', $house_type ) );
+
 
             // area
             $area_terms = wp_get_post_terms( $post_id, 'property-city', ['fields' => 'names'] );
