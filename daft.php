@@ -60,12 +60,14 @@ class MSIDaft {
             $saleAdElement->appendChild( $XML->createElement( 'county', $county ) );
 
             // property_type
-            $property_type = get_post_meta( $post_id, 'daftie-property-type', true ) ?: '1';
+            $property_type = get_post_meta( $post_id, 'daftie-property-type', true ) ?: 'apartment';
             $saleAdElement->appendChild( $XML->createElement( 'property_type', $property_type ) );
 
             // house_type
-            $house_type = get_post_meta( $post_id, 'daftie-house-type', true ) ?: '1';
-            $saleAdElement->appendChild( $XML->createElement( 'house_type', $house_type ) );
+            if ( $property_type == 'house' ) {
+               $house_type = get_post_meta( $post_id, 'daftie-house-type', true ) ?: 'detached';
+               $saleAdElement->appendChild( $XML->createElement( 'house_type', $house_type ) );
+            }
 
 
             // area

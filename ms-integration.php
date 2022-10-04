@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.4.5
+ * Version: 0.4.6
  */
 
 
@@ -184,10 +184,10 @@ class MS_Integration {
 
       include( 'myhome.php' );
       if ( $action == 'publish' ) {
-         MSIMyHome::publish( (array) $post_ids );
+         // MSIMyHome::publish( (array) $post_ids );
       }
       if ( $action == 'remove' ) {
-         MSIMyHome::remove( (array) $post_ids );
+         // MSIMyHome::remove( (array) $post_ids );
       }
 
    }
@@ -373,3 +373,20 @@ $cpfeUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
 
 //Set the branch that contains the stable release.
 $cpfeUpdateChecker->setBranch('main');
+
+
+
+
+
+// add_filter( 'ere_property_meta_boxes', function( $property_meta_boxes ) {
+//    error_log( "property_meta_boxes\n" . print_r( $property_meta_boxes, true ) . "\n" );
+
+//    return $property_meta_boxes;
+// }, 9999 );
+
+
+// add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) {
+//    error_log( "property_metabox_fields\n" . print_r( $property_metabox_fields, true ) . "\n" );
+
+//    return $property_metabox_fields;
+// }, 9999 );
