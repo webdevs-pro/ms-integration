@@ -183,12 +183,8 @@ class MS_Integration {
       MSIDaft::update_service( (array) $post_ids );
 
       include( 'myhome.php' );
-      if ( $action == 'publish' ) {
-         // MSIMyHome::publish( (array) $post_ids );
-      }
-      if ( $action == 'remove' ) {
-         // MSIMyHome::remove( (array) $post_ids );
-      }
+      MSIMyHome::update_service( (array) $post_ids, $action );
+
 
    }
 
