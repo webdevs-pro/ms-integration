@@ -136,7 +136,7 @@ class MSIMyHome {
          'body' => $json,
       ) );
 
-      error_log( "media response\n" . print_r( $response['body'], true ) . "\n" );
+      error_log( "media response\n" . print_r( $response, true ) . "\n" );
 
    }
 
