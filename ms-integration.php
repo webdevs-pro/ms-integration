@@ -152,6 +152,7 @@ class MS_Integration {
     * @return void
     */
    public function extra_publish_meta_options_save( $post_id, $post, $update ) {
+      error_log( "_POST\n" . print_r( $_POST, true ) . "\n" );
       if ( 'property' != $post->post_type ) {
          return;
       }
@@ -340,7 +341,7 @@ add_action( 'manage_property_posts_custom_column', function( $column_key, $post_
    }
 }, 10, 2);
 
-add_filter('manage_edit-property_sortable_columns', function($columns) {
+add_filter( 'manage_edit-property_sortable_columns', function( $columns ) {
    $columns['published'] = 'published';
    return $columns;
 });
@@ -381,8 +382,332 @@ $cpfeUpdateChecker->setBranch('main');
 // }, 9999 );
 
 
-// add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) {
-//    error_log( "property_metabox_fields\n" . print_r( $property_metabox_fields, true ) . "\n" );
+add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) {
 
-//    return $property_metabox_fields;
-// }, 9999 );
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      0,
+      array(
+         'id' => 'REAL_HOMES_property_selling_type_daft',
+         'name' => 'Selling type (for daft.ie)',
+         'type' => 'select',
+         'options' => array(
+            'private-treaty' => 'private-treaty',
+            'auction' => 'auction',
+            'tender' => 'tender',
+         ),
+         'inline' => '',
+         'columns' => '12',
+         'tab' => 'details',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      1,
+      array(
+         'id' => 'REAL_HOMES_property_type_daft',
+         'name' => 'Property type (for daft.ie)',
+         'type' => 'select',
+         // 'std' => '',
+         'options' => array(
+            'house' => 'House',
+            'apartment' => 'Apartment',
+            'duplex' => 'Duplex',
+            'bungalow' => 'Bungalow',
+            'site' => 'Site'
+         ),
+         'inline' => '',
+         'columns' => '12',
+         'tab' => 'details',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      2,
+      array(
+         'id' => 'REAL_HOMES_property_house_type_daft',
+         'name' => 'House type (for daft.ie)',
+         'type' => 'select',
+         // 'std' => 'thumb-on-right',
+         'options' => array(
+            'detached' => 'Detached',
+            'semi-detached' => 'Semi-detached',
+            'terraced' => 'Terraced',
+            'end-of-terrace' => 'End-of-terrace',
+            'townhouse' => 'Townhouse',
+         ),
+         'inline' => '',
+         'columns' => '12',
+         'tab' => 'details',
+         'visible' => array(
+            'REAL_HOMES_property_type_daft',
+             '=',
+             'house'
+         )
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      3,
+      array(
+         'type' => 'divider',
+         'columns' => '12',
+         'id' => 'ms-divider-01',
+         'tab' => 'details',
+      )
+   );
+
+
+
+   $REAL_HOMES_property_address_key_position = intval( array_search( 'REAL_HOMES_property_address', array_column( $property_metabox_fields, 'id' ) ) );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      $REAL_HOMES_property_address_key_position + 1,
+      array(
+         'id' => 'REAL_HOMES_property_address_line_1',
+         'name' => 'Address line 1 (street)',
+         'type' => 'text',
+         'columns' => '6',
+         'tab' => 'map-location',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      $REAL_HOMES_property_address_key_position + 2,
+      array(
+         'id' => 'REAL_HOMES_property_address_line_2',
+         'name' => 'Address line 2 (area)',
+         'type' => 'text',
+         'columns' => '6',
+         'tab' => 'map-location',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      $REAL_HOMES_property_address_key_position + 3,
+      array(
+         'id' => 'REAL_HOMES_property_address_line_3',
+         'name' => 'Address line 3 (county)',
+         'type' => 'text',
+         'columns' => '6',
+         'tab' => 'map-location',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      $REAL_HOMES_property_address_key_position + 4,
+      array(
+         'id' => 'REAL_HOMES_property_eircode',
+         'name' => 'Eircode',
+         'type' => 'text',
+         'columns' => '6',
+         'tab' => 'map-location',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      $REAL_HOMES_property_address_key_position + 5,
+      array(
+         'id' => 'REAL_HOMES_property_address_daft_county',
+         'name' => 'County (for daft.ie)',
+         'type' => 'select',
+         // 'std' => 'thumb-on-right',
+         'options' => array(
+            '1' => 'Co. Dublin',
+            '2' => 'Co. Meath',
+            '3' => 'Co. Kildare',
+            '4' => 'Co. Wicklow',
+            '5' => 'Co. Longford',
+            '6' => 'Co. Offaly',
+            '7' => 'Co. Westmeath',
+            '8' => 'Co. Laois',
+            '9' => 'Co. Louth',
+            '10' => 'Co. Carlow',
+            '11' => 'Co. Kilkenny',
+            '12' => 'Co. Waterford',
+            '13' => 'Co. Wexford',
+            '14' => 'Co. Kerry',
+            '15' => 'Co. Cork',
+            '16' => 'Co. Clare',
+            '17' => 'Co. Limerick',
+            '18' => 'Co. Tipperary',
+            '19' => 'Co. Galway',
+            '20' => 'Co. Mayo',
+            '21' => 'Co. Roscommon',
+            '22' => 'Co. Sligo',
+            '23' => 'Co. Leitrim',
+            '24' => 'Co. Donegal',
+            '25' => 'Co. Cavan',
+            '26' => 'Co. Monaghan',
+            '27' => 'Co. Antrim',
+            '28' => 'Co. Armagh',
+            '29' => 'Co. Tyrone',
+            '30' => 'Co. Fermanagh',
+            '31' => 'Co. Derry',
+            '32' => 'Co. Down',
+         ),
+         'inline' => '',
+         'columns' => '12',
+         'tab' => 'map-location',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      $REAL_HOMES_property_address_key_position + 6,
+      array(
+         'type' => 'divider',
+         'columns' => '12',
+         'id' => 'ms-divider-02',
+         'tab' => 'map-location',
+      )
+   );
+
+
+   // error_log( "property_metabox_fields\n" . print_r( $property_metabox_fields, true ) . "\n" );
+
+
+
+   return $property_metabox_fields;
+}, 9999 );
+
+
+
+
+
+
+
+
+
+
+add_filter( 'ere_agent_meta_boxes', function( $agent_metabox_fields ) {
+
+
+   foreach ( $agent_metabox_fields as $index => $metabox ) {
+      if ( isset( $metabox['id'] ) && $metabox['id'] == 'agent-meta-box' ) {
+
+         $general_tab = array(
+            'label' => 'General',
+            'icon' => 'dashicons-admin-generic'
+         );
+         array_unshift_assoc( $agent_metabox_fields[$index]['tabs'], 'general', $general_tab );
+
+         $agent_id_field = array(
+            'id' => 'REAL_HOMES_agent_id_daft',
+            'name' => 'Agent ID (for daft.ie)',
+            'type' => 'text',
+            'columns' => '12',
+            'tab' => 'general',
+         );
+         array_unshift( $agent_metabox_fields[$index]['fields'], $agent_id_field );
+
+
+   // $property_metabox_fields = ms_array_insert(
+   //    $agent_metabox_fields,
+   //    0,
+   //    array(
+   //       'id' => 'REAL_HOMES_property_address_line_1',
+   //       'name' => 'Address line 1 (street)',
+   //       'type' => 'text',
+   //       'columns' => '6',
+   //       'tab' => 'map-location',
+   //    )
+   // );
+
+      }
+   }
+
+
+
+
+   // $property_metabox_fields = ms_array_insert(
+   //    $agent_metabox_fields,
+   //    0,
+   //    array(
+   //       'id' => 'REAL_HOMES_property_address_line_1',
+   //       'name' => 'Address line 1 (street)',
+   //       'type' => 'text',
+   //       'columns' => '6',
+   //       'tab' => 'map-location',
+   //    )
+   // );
+
+
+   // error_log( "agent_metabox_fields\n" . print_r( $agent_metabox_fields, true ) . "\n" );
+
+
+
+   return $agent_metabox_fields;
+}, 9999 );
+
+
+
+
+
+
+
+
+function array_unshift_assoc( &$arr, $key, $val ) {
+   $arr = array_reverse( $arr, true );
+   $arr[$key] = $val;
+   $arr = array_reverse( $arr, true );
+   return count( $arr );
+} 
+
+
+
+
+function ms_array_insert( $array, $index, $val ) {
+   $size = count( $array ); //because I am going to use this more than one time
+   if ( ! is_int( $index ) || $index < 0 || $index > $size ) {
+      return -1;
+   } else {
+      $temp = array_slice( $array, 0, $index );
+      $temp[] = $val;
+      return array_merge( $temp, array_slice( $array, $index, $size ) );
+   }
+}
+
+
+
+
+
+
+
+
+
+
+add_action('admin_footer', 'bt_before_submit_validation');
+function bt_before_submit_validation () {
+?>
+   <style>
+      #publish {
+         display: none;
+      }
+   </style>
+
+   <script>
+      ( $ => {
+
+         var button_text = $( '#publish' ).attr( 'value' );
+
+         $( '#publish' ).before( '<button type="button" id="prepublish" class="button button-primary button-large">' + button_text + '</button>' );
+
+         $( document ).on( 'click', '#prepublish', e => {
+
+            alert();
+
+         } );
+
+      } )( jQuery );
+   </script>
+<?php
+}
