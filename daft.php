@@ -60,7 +60,7 @@ class MSIDaft {
             $saleAdElement->appendChild( $XML->createElement( 'county', $county ) );
 
             // property_type
-            $property_type = get_post_meta( $post_id, 'REAL_HOMES_property_type_daft', true ) ?: 'apartment';
+            $property_type = get_post_meta( $post_id, 'REAL_HOMES_property_type', true ) ?: 'apartment';
             $saleAdElement->appendChild( $XML->createElement( 'property_type', $property_type ) );
 
             // house_type
@@ -93,7 +93,7 @@ class MSIDaft {
                $saleAdElement->appendChild( $XML->createElement( 'price', $price_meta ) );
             }
 
-            $selling_type = get_post_meta( $post_id, 'REAL_HOMES_property_selling_type_daft', true );
+            $selling_type = get_post_meta( $post_id, 'REAL_HOMES_property_sale_type_daft', true );
             $saleAdElement->appendChild( $XML->createElement( 'selling_type', $selling_type ) );
 
             $price_type = 'region';
@@ -180,8 +180,6 @@ class MSIDaft {
 
             }
 
-
-
             // append
             $salesElement->appendChild( $saleAdElement );
          }
@@ -191,7 +189,6 @@ class MSIDaft {
   
       $XML->formatOutput = true;
 
-      // $XML->saveXML();
       $XML->save( '../raycooke.xml' );
    }
 }
