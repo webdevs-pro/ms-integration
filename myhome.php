@@ -77,7 +77,7 @@ class MSIMyHome {
 
 
       return array(
-         'description' => $post->post_content,
+         'description' => $content,
          'status' => $status,
          'title' => $post->post_title,
          'price' => get_post_meta( $post_id, 'REAL_HOMES_property_price', true ),
@@ -85,6 +85,7 @@ class MSIMyHome {
          'ref_id' => get_post_meta( $post_id, 'REAL_HOMES_property_id', true ),
          'bathrooms' => get_post_meta( $post_id, 'REAL_HOMES_property_bathrooms', true ),
          'bedrooms' => get_post_meta( $post_id, 'REAL_HOMES_property_bedrooms', true ),
+         'eircode' => get_post_meta( $post_id, 'REAL_HOMES_property_eircode', true ),
          'content' => $content
       );
    }
@@ -113,7 +114,7 @@ class MSIMyHome {
                "Prop_Class": "Residential",
                "Prop_CompanyGroup": "' . self::$company_group . '",
                "Prop_CompanyName": "' . self::$company_name . '",
-               "Prop_Eircode": "D10P956",
+               "Prop_Eircode": "' . $property_data['eircode'] . '",
                "Prop_FullDescription": "' . $property_data['content'] . '",
                "Prop_Price": "' . $property_data['price'] . '",
                "Prop_Size": "' . $property_data['size'] . '",
@@ -157,7 +158,7 @@ class MSIMyHome {
                "Prop_Class": "Residential",
                "Prop_CompanyGroup": "' . self::$company_group . '",
                "Prop_CompanyName": "' . self::$company_name . '",
-               "Prop_Eircode": "D10P956",
+               "Prop_Eircode": "' . $property_data['eircode'] . '",
                "Prop_FullDescription": "' . $property_data['content'] . '",
                "Prop_Price": "' . $property_data['price'] . '",
                "Prop_Size": "' . $property_data['size'] . '",
@@ -198,6 +199,8 @@ class MSIMyHome {
          }
 
       }
+
+      return [];
    }
 
 
