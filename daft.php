@@ -56,16 +56,16 @@ class MSIDaft {
             }
 
             // county
-            $county = get_post_meta( $post_id, 'daft-property-county', true ) ?: '1';
+            $county = get_post_meta( $post_id, 'REAL_HOMES_property_address_daft_county', true ) ?: '1';
             $saleAdElement->appendChild( $XML->createElement( 'county', $county ) );
 
             // property_type
-            $property_type = get_post_meta( $post_id, 'daftie-property-type', true ) ?: 'apartment';
+            $property_type = get_post_meta( $post_id, 'REAL_HOMES_property_type_daft', true ) ?: 'apartment';
             $saleAdElement->appendChild( $XML->createElement( 'property_type', $property_type ) );
 
             // house_type
             if ( $property_type == 'house' ) {
-               $house_type = get_post_meta( $post_id, 'daftie-house-type', true ) ?: 'detached';
+               $house_type = get_post_meta( $post_id, 'REAL_HOMES_property_house_type_daft', true ) ?: 'detached';
                $saleAdElement->appendChild( $XML->createElement( 'house_type', $house_type ) );
             }
 
@@ -92,8 +92,12 @@ class MSIDaft {
             if ( $price_meta ) {
                $saleAdElement->appendChild( $XML->createElement( 'price', $price_meta ) );
             }
-            $saleAdElement->appendChild( $XML->createElement( 'selling_type', 'private-treaty' ) );
-            $saleAdElement->appendChild( $XML->createElement( 'price_type', 'region' ) );
+
+            $selling_type = get_post_meta( $post_id, 'REAL_HOMES_property_selling_type_daft', true );
+            $saleAdElement->appendChild( $XML->createElement( 'selling_type', $selling_type ) );
+
+            $price_type = 'region';
+            $saleAdElement->appendChild( $XML->createElement( 'price_type', $price_type ) );
 
             // bathroom_number
             $bathrooms_number_meta = get_post_meta( $post_id, 'REAL_HOMES_property_bathrooms', true );
@@ -116,7 +120,7 @@ class MSIDaft {
             // agent
             $agent_post_id = get_post_meta( $post_id, 'REAL_HOMES_agents', true );
             if ( $agent_post_id ) {
-               $daft_agent_id = get_post_meta( $agent_post_id, 'daft-agent-id', true );
+               $daft_agent_id = get_post_meta( $agent_post_id, 'REAL_HOMES_agent_id_daft', true );
                if ( ! $daft_agent_id ) {
                   continue;
                }
@@ -133,7 +137,7 @@ class MSIDaft {
                } elseif ( ! $agent_phone_1_meta && $agent_phone_2_meta ) {
                   $saleAdElement->appendChild( $XML->createElement( 'phone1', $agent_phone_2_meta ) );
                }
-               $daft_agent_id = get_post_meta( $post_id, 'daft-agent-id', true );
+               // $daft_agent_id = get_post_meta( $post_id, 'daft-agent-id', true );
 
 
                // contact_name
