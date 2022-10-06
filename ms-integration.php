@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.4.7
+ * Version: 0.5.0
  */
 
 
@@ -53,7 +53,7 @@ class MS_Integration {
 
       // let's remove query args first
       $redirect_to = remove_query_arg(
-         array( 'bulk_publishd_properties', 'bulk_removed_properties', 'post_id', 'property_services_action' ),
+         array( 'bulk_published_properties', 'bulk_removed_properties', 'post_id', 'property_services_action' ),
          $redirect_to
       );
 
@@ -62,7 +62,7 @@ class MS_Integration {
          foreach ( $post_ids as $post_id ) {
             update_post_meta( $post_id, 'published_on_services', 1 );
          }
-         $redirect_to = add_query_arg( 'bulk_publishd_properties', count( $post_ids ), $redirect_to );
+         $redirect_to = add_query_arg( 'bulk_published_properties', count( $post_ids ), $redirect_to );
          $this->update_properties_on_services( $post_ids, 'publish' );
       }
 
@@ -89,8 +89,8 @@ class MS_Integration {
     */
    function bulk_action_notices() {
       // publishd
-      if( ! empty( $_REQUEST[ 'bulk_publishd_properties' ] ) ) {
-         $count = (int) $_REQUEST[ 'bulk_publishd_properties' ];
+      if( ! empty( $_REQUEST[ 'bulk_published_properties' ] ) ) {
+         $count = (int) $_REQUEST[ 'bulk_published_properties' ];
          $message = sprintf(
             _n(
                '%d property has been updated on services.',
@@ -152,7 +152,6 @@ class MS_Integration {
     * @return void
     */
    public function extra_publish_meta_options_save( $post_id, $post, $update ) {
-      error_log( "_POST\n" . print_r( $_POST, true ) . "\n" );
       if ( 'property' != $post->post_type ) {
          return;
       }
@@ -180,13 +179,15 @@ class MS_Integration {
     * @return void
     */
    public function update_properties_on_services( $post_ids, $action ) {
-      include_once( 'daft.php' );
-      // MSIDaft::update_service( (array) $post_ids );
+      include( 'daft.php' );
+      MSIDaft::update_service( (array) $post_ids );
 
       include( 'myhome.php' );
       MSIMyHome::update_service( (array) $post_ids, $action );
 
-
+      add_action( 'admin_footer', function() {
+         error_log( "BOOM" );
+      }, 999 );
    }
 
 
@@ -285,7 +286,7 @@ class MS_Integration {
     * @return array $url
     */
    public function remove_bulk_actions_query_params( $url ) {   
-      return remove_query_arg( array( 'bulk_publishd_properties', 'bulk_removed_properties' ), $url );
+      return remove_query_arg( array( 'bulk_published_properties', 'bulk_removed_properties' ), $url );
    }
 
 }
@@ -375,12 +376,6 @@ $cpfeUpdateChecker->setBranch('main');
 
 
 
-// add_filter( 'ere_property_meta_boxes', function( $property_meta_boxes ) {
-//    error_log( "property_meta_boxes\n" . print_r( $property_meta_boxes, true ) . "\n" );
-
-//    return $property_meta_boxes;
-// }, 9999 );
-
 
 add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) {
 
@@ -388,16 +383,15 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       $property_metabox_fields,
       0,
       array(
-         'id' => 'REAL_HOMES_property_selling_type_daft',
-         'name' => 'Selling type (for daft.ie)',
+         'id' => 'REAL_HOMES_property_sale_type_daft',
+         'name' => 'Sale type (for daft.ie)',
          'type' => 'select',
          'options' => array(
-            'private-treaty' => 'private-treaty',
-            'auction' => 'auction',
-            'tender' => 'tender',
+            'private-treaty' => 'Private',
+            'auction' => 'Auction',
+            'tender' => 'Tender',
          ),
-         'inline' => '',
-         'columns' => '12',
+         'columns' => '6',
          'tab' => 'details',
       )
    );
@@ -406,8 +400,50 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       $property_metabox_fields,
       1,
       array(
-         'id' => 'REAL_HOMES_property_type_daft',
-         'name' => 'Property type (for daft.ie)',
+         'id' => 'REAL_HOMES_property_sale_type_myhome',
+         'name' => 'Sale type (for myhome.ie)',
+         'type' => 'select',
+         'desc' => 'Determines the type of sale. Not mandatory when Propукен Class is Lettings. Residencial = [Private, Auction], Commercial = [For Sale, To Let, For Auction, For Tender], Overseas = [New - Just Built, Off]',
+         'options' => array(
+            'Private' => 'Private',
+            'Auction' => 'Auction',
+            'For Sale' => 'For Sale',
+            'For Auction' => 'For Auction',
+            'For Tender' => 'For Tender',
+            'New - Just Built' => 'New - Just Built',
+            'Off' => 'Off',
+            '' => 'None'
+         ),
+         'columns' => '6',
+         'tab' => 'details',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      2,
+      array(
+         'id' => 'REAL_HOMES_property_class_myhome',
+         'name' => 'Property class (for myhome.ie)',
+         'type' => 'select',
+         'options' => array(
+            'Residential' => 'Residential',
+            'NewHomes' => 'NewHomes',
+            'Lettings' => 'Lettings',
+            'Commercial' => 'Commercial',
+            'Overseas' => 'Overseas',
+         ),
+         'columns' => '6',
+         'tab' => 'details',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      3,
+      array(
+         'id' => 'REAL_HOMES_property_type',
+         'name' => 'Property type',
          'type' => 'select',
          // 'std' => '',
          'options' => array(
@@ -417,15 +453,14 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
             'bungalow' => 'Bungalow',
             'site' => 'Site'
          ),
-         'inline' => '',
-         'columns' => '12',
+         'columns' => '6',
          'tab' => 'details',
       )
    );
 
    $property_metabox_fields = ms_array_insert(
       $property_metabox_fields,
-      2,
+      4,
       array(
          'id' => 'REAL_HOMES_property_house_type_daft',
          'name' => 'House type (for daft.ie)',
@@ -438,20 +473,21 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
             'end-of-terrace' => 'End-of-terrace',
             'townhouse' => 'Townhouse',
          ),
-         'inline' => '',
-         'columns' => '12',
+         'columns' => '6',
          'tab' => 'details',
          'visible' => array(
-            'REAL_HOMES_property_type_daft',
+            'REAL_HOMES_property_type',
              '=',
              'house'
          )
       )
    );
 
+
+
    $property_metabox_fields = ms_array_insert(
       $property_metabox_fields,
-      3,
+      5,
       array(
          'type' => 'divider',
          'columns' => '12',
@@ -459,8 +495,6 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
          'tab' => 'details',
       )
    );
-
-
 
    $REAL_HOMES_property_address_key_position = intval( array_search( 'REAL_HOMES_property_address', array_column( $property_metabox_fields, 'id' ) ) );
 
@@ -554,7 +588,6 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
             '31' => 'Co. Derry',
             '32' => 'Co. Down',
          ),
-         'inline' => '',
          'columns' => '12',
          'tab' => 'map-location',
       )
@@ -571,26 +604,10 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       )
    );
 
-
-   // error_log( "property_metabox_fields\n" . print_r( $property_metabox_fields, true ) . "\n" );
-
-
-
    return $property_metabox_fields;
 }, 9999 );
 
-
-
-
-
-
-
-
-
-
 add_filter( 'ere_agent_meta_boxes', function( $agent_metabox_fields ) {
-
-
    foreach ( $agent_metabox_fields as $index => $metabox ) {
       if ( isset( $metabox['id'] ) && $metabox['id'] == 'agent-meta-box' ) {
 
@@ -598,7 +615,7 @@ add_filter( 'ere_agent_meta_boxes', function( $agent_metabox_fields ) {
             'label' => 'General',
             'icon' => 'dashicons-admin-generic'
          );
-         array_unshift_assoc( $agent_metabox_fields[$index]['tabs'], 'general', $general_tab );
+         ms_array_unshift_assoc( $agent_metabox_fields[$index]['tabs'], 'general', $general_tab );
 
          $agent_id_field = array(
             'id' => 'REAL_HOMES_agent_id_daft',
@@ -608,62 +625,17 @@ add_filter( 'ere_agent_meta_boxes', function( $agent_metabox_fields ) {
             'tab' => 'general',
          );
          array_unshift( $agent_metabox_fields[$index]['fields'], $agent_id_field );
-
-
-   // $property_metabox_fields = ms_array_insert(
-   //    $agent_metabox_fields,
-   //    0,
-   //    array(
-   //       'id' => 'REAL_HOMES_property_address_line_1',
-   //       'name' => 'Address line 1 (street)',
-   //       'type' => 'text',
-   //       'columns' => '6',
-   //       'tab' => 'map-location',
-   //    )
-   // );
-
       }
    }
-
-
-
-
-   // $property_metabox_fields = ms_array_insert(
-   //    $agent_metabox_fields,
-   //    0,
-   //    array(
-   //       'id' => 'REAL_HOMES_property_address_line_1',
-   //       'name' => 'Address line 1 (street)',
-   //       'type' => 'text',
-   //       'columns' => '6',
-   //       'tab' => 'map-location',
-   //    )
-   // );
-
-
-   // error_log( "agent_metabox_fields\n" . print_r( $agent_metabox_fields, true ) . "\n" );
-
-
-
    return $agent_metabox_fields;
 }, 9999 );
 
-
-
-
-
-
-
-
-function array_unshift_assoc( &$arr, $key, $val ) {
+function ms_array_unshift_assoc( &$arr, $key, $val ) {
    $arr = array_reverse( $arr, true );
    $arr[$key] = $val;
    $arr = array_reverse( $arr, true );
    return count( $arr );
 } 
-
-
-
 
 function ms_array_insert( $array, $index, $val ) {
    $size = count( $array ); //because I am going to use this more than one time
@@ -674,40 +646,4 @@ function ms_array_insert( $array, $index, $val ) {
       $temp[] = $val;
       return array_merge( $temp, array_slice( $array, $index, $size ) );
    }
-}
-
-
-
-
-
-
-
-
-
-
-add_action('admin_footer', 'bt_before_submit_validation');
-function bt_before_submit_validation () {
-?>
-   <style>
-      #publish {
-         display: none;
-      }
-   </style>
-
-   <script>
-      ( $ => {
-
-         var button_text = $( '#publish' ).attr( 'value' );
-
-         $( '#publish' ).before( '<button type="button" id="prepublish" class="button button-primary button-large">' + button_text + '</button>' );
-
-         $( document ).on( 'click', '#prepublish', e => {
-
-            alert();
-
-         } );
-
-      } )( jQuery );
-   </script>
-<?php
 }
