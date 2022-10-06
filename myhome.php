@@ -24,8 +24,6 @@ class MSIMyHome {
          }
 
       }
-
-
    }
 
 
@@ -38,26 +36,32 @@ class MSIMyHome {
       switch ( $property_status_terms[0] ) {
          case 'for-rent':
             $status = 'A';
+            $sale_or_rent = 'Rent';
             break;
 
          case 'for-sale':
             $status = 'A';
+            $sale_or_rent = 'Sale';
             break;
          
          case 'let-agreed':
             $status = 'A';
+            $sale_or_rent = 'Rent';
             break;
          
          case 'sale-agreed':
             $status = 'SA';
+            $sale_or_rent = 'Sale';
             break;
          
          case 'sold':
             $status = 'S';
+            $sale_or_rent = 'Sale';
             break;
          
          default:
             $status = 'A';
+            $sale_or_rent = 'Sale';
             break;
       }
 
@@ -72,22 +76,68 @@ class MSIMyHome {
       $content = str_replace( '"', "'", $content );
       $content = strip_tags( $content, '<div><span><br><b><strong><ul><ol><li><i><u>' );
 
-
-
-
-
       return array(
-         'description' => $content,
+         'description' => strtok( $content, '.' ),
          'status' => $status,
+         'sale_or_rent' => $sale_or_rent,
          'title' => $post->post_title,
+         'adsress_1' => get_post_meta( $post_id, 'REAL_HOMES_property_address_line_1', true ),
+         'adsress_2' => get_post_meta( $post_id, 'REAL_HOMES_property_address_line_2', true ),
+         'adsress_3' => get_post_meta( $post_id, 'REAL_HOMES_property_address_line_3', true ),
          'price' => get_post_meta( $post_id, 'REAL_HOMES_property_price', true ),
          'size' => get_post_meta( $post_id, 'REAL_HOMES_property_size', true ),
          'ref_id' => get_post_meta( $post_id, 'REAL_HOMES_property_id', true ),
          'bathrooms' => get_post_meta( $post_id, 'REAL_HOMES_property_bathrooms', true ),
          'bedrooms' => get_post_meta( $post_id, 'REAL_HOMES_property_bedrooms', true ),
          'eircode' => get_post_meta( $post_id, 'REAL_HOMES_property_eircode', true ),
+         'class' => get_post_meta( $post_id, 'REAL_HOMES_property_class_myhome', true ),
+         'type' => get_post_meta( $post_id, 'REAL_HOMES_property_type', true ),
+         'sale_type' => get_post_meta( $post_id, 'REAL_HOMES_property_sale_type_myhome', true ),
          'content' => $content
       );
+   }
+
+
+
+   private static function process_attachments( $property_data, $post_id ) {
+      $token = self::get_token();
+      $images = get_post_meta( $post_id, 'REAL_HOMES_property_images' );
+      $images_arr = array();
+
+      if ( $images ) {
+         foreach ( $images as $index => $image_id ) {
+            $image_url = wp_get_attachment_url( $image_id );
+            $images_arr[] = (object) array(
+               'Prim_RefId' => $property_data['ref_id'],
+               'Prim_CompanyGroup' => self::$company_group,
+               'Prim_Type' => $index == 0 ? 'PM' : 'PA',
+               'Prim_Filename' => $image_url,
+               'Prim_Name' => $property_data['title'],
+               'Prim_Status' => $property_data['status'],
+               'Prim_Class' => $property_data['class']
+            );
+         }
+      }
+
+      $images_arr = (object) array(
+         'Medias' => $images_arr,
+      );
+
+      $json = json_encode( $images_arr, JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES );
+      // error_log( "json\n" . print_r( $json, true ) . "\n" );
+
+      $response = wp_remote_request( self::$api_url . 'medias/' . $property_data['ref_id'], array(
+         'method' => 'PUT',
+         'headers' => array(
+            'Accept'=> 'application/json',
+            'Content-Type'=> 'application/json',
+            'Authorization' => 'Bearer ' . $token,
+         ),
+         'body' => $json,
+      ) );
+
+      error_log( "media response\n" . print_r( $response['body'], true ) . "\n" );
+
    }
 
 
@@ -106,12 +156,12 @@ class MSIMyHome {
          ),
          'body' => '{
             "Property":{
-               "Prop_Address1": "' . $property_data['title'] . '",
-               "Prop_Address2": "",
-               "Prop_Address3": "",
+               "Prop_Address1": "' . $property_data['adsress_1'] . '",
+               "Prop_Address2": "' . $property_data['adsress_2'] . '",
+               "Prop_Address3": "' . $property_data['adsress_3'] . '",
                "Prop_Bathrooms": "' . $property_data['bathrooms'] . '",
                "Prop_Bedrooms": "' . $property_data['bedrooms'] . '",
-               "Prop_Class": "Residential",
+               "Prop_Class": "' . $property_data['class'] . '",
                "Prop_CompanyGroup": "' . self::$company_group . '",
                "Prop_CompanyName": "' . self::$company_name . '",
                "Prop_Eircode": "' . $property_data['eircode'] . '",
@@ -119,14 +169,16 @@ class MSIMyHome {
                "Prop_Price": "' . $property_data['price'] . '",
                "Prop_Size": "' . $property_data['size'] . '",
                "Prop_RefId": "' . $property_data['ref_id'] . '",
-               "Prop_SaleOrRent": "let",
-               "Prop_SaleType": "Private",
+               "Prop_SaleOrRent": "' . $property_data['sale_or_rent'] . '",
+               "Prop_SaleType": "' . $property_data['sale_type'] . '",
                "Prop_ShowPrice": "Y",
                "Prop_Status": "' . $property_data['status'] . '",
-               "Prop_Type": "Site"
+               "Prop_Type": "' . $property_data['type'] . '"
             }
          }',
       ) );
+
+      self::process_attachments( $property_data, $post_id );
 
       error_log( "publish response\n" . print_r( $response['body'], true ) . "\n" );
    }
@@ -150,12 +202,12 @@ class MSIMyHome {
          ),
          'body' => '{
             "Property":{
-               "Prop_Address1": "' . $property_data['title'] . '",
-               "Prop_Address2": "",
-               "Prop_Address3": "",
+               "Prop_Address1": "' . $property_data['adsress_1'] . '",
+               "Prop_Address2": "' . $property_data['adsress_2'] . '",
+               "Prop_Address3": "' . $property_data['adsress_3'] . '",
                "Prop_Bathrooms": "' . $property_data['bathrooms'] . '",
                "Prop_Bedrooms": "' . $property_data['bedrooms'] . '",
-               "Prop_Class": "Residential",
+               "Prop_Class": "' . $property_data['class'] . '",
                "Prop_CompanyGroup": "' . self::$company_group . '",
                "Prop_CompanyName": "' . self::$company_name . '",
                "Prop_Eircode": "' . $property_data['eircode'] . '",
@@ -163,14 +215,16 @@ class MSIMyHome {
                "Prop_Price": "' . $property_data['price'] . '",
                "Prop_Size": "' . $property_data['size'] . '",
                "Prop_RefId": "' . $property_data['ref_id'] . '",
-               "Prop_SaleOrRent": "let",
-               "Prop_SaleType": "Private",
+               "Prop_SaleOrRent": "' . $property_data['sale_or_rent'] . '",
+               "Prop_SaleType": "' . $property_data['sale_type'] . '",
                "Prop_ShowPrice": "Y",
                "Prop_Status": "' . ( $action == 'remove' ? 'D' : $property_data['status'] ) . '",
-               "Prop_Type": "Site"
+               "Prop_Type": "' . $property_data['type'] . '"
             }
          }',
       ) );
+
+      self::process_attachments( $property_data, $post_id );
 
       error_log( "update response\n" . print_r( $response['body'], true ) . "\n" );
    }
