@@ -403,7 +403,7 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
          'id' => 'REAL_HOMES_property_sale_type_myhome',
          'name' => 'Sale type (for myhome.ie)',
          'type' => 'select',
-         'desc' => 'Determines the type of sale. Not mandatory when Propукен Class is Lettings. Residencial = [Private, Auction], Commercial = [For Sale, To Let, For Auction, For Tender], Overseas = [New - Just Built, Off]',
+         'desc' => 'Determines the type of sale. Not mandatory when property class is Lettings. Residencial = [Private, Auction], Commercial = [For Sale, To Let, For Auction, For Tender], Overseas = [New - Just Built, Off]',
          'options' => array(
             'Private' => 'Private',
             'Auction' => 'Auction',
