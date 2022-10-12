@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.5.0
+ * Version: 0.5.1
  */
 
 
@@ -28,8 +28,8 @@ class MS_Integration {
     * @return array $bulk_actions
     */
    public function register_integration_actions( $bulk_actions ) {
-      $bulk_actions['publish_on_servises'] = 'Publish to services';
-      $bulk_actions['remove_from_servises'] = 'Remove from services';
+      $bulk_actions['publish_on_servises'] = 'Publish to Daft and MH';
+      $bulk_actions['remove_from_servises'] = 'Remove from Daft and MH';
       return $bulk_actions;
    }
 
@@ -131,7 +131,7 @@ class MS_Integration {
       if ( 'property' == $post_obj->post_type ) {
          ?>
          <div class="misc-pub-section misc-pub-section-last" style="padding: 10px; background-color: #e1ffe1;">
-            <h4>Publish this property on services?</h4>
+            <h4>Publish to Daft and MH?</h4>
             <label>
                <input type="checkbox"<?php echo $value ? ' checked="checked" ' : ''; ?> value="1" name="published_on_services" />
                <b>Publish</b>
@@ -220,7 +220,7 @@ class MS_Integration {
                  'property_services_action' => 'publish',
                )
              );
-            $actions['publish_to_services'] = '<a title="Publish to services" href="' . $url . '">Publish to services</a>';
+            $actions['publish_to_services'] = '<a title="Publish to Daft and MH" href="' . $url . '">Publish to Daft and MH</a>';
          } else {
             $url = add_query_arg(
                array(
@@ -228,7 +228,7 @@ class MS_Integration {
                  'property_services_action' => 'remove',
                )
              );
-            $actions['remove_from_services'] = '<a title="Remove from services" href="' . $url . '">Remove from services</a>';
+            $actions['remove_from_services'] = '<a title="Remove from Daft and MH" href="' . $url . '">Remove from Daft and MH</a>';
          }
       }
       return $actions;
@@ -323,7 +323,7 @@ add_filter( 'manage_edit-property_columns', function( $columns ) {
    $columns = array_reverse( $columns );
 
    $position = 1;
-   $new_item = ['published' => 'Published on services'];
+   $new_item = ['published' => 'Published on Daft and MH'];
 
    $columns = array_slice( $columns, 0, $position ) + $new_item + array_slice( $columns, $position );
 
