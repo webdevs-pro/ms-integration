@@ -117,14 +117,14 @@ class MSIDaft {
                $saleAdElement->appendChild( $XML->createElement( 'square_metres', $square_metres_meta ) );
             }
 
-            // agent
+            // agent info
             $agent_post_id = get_post_meta( $post_id, 'REAL_HOMES_agents', true );
             if ( $agent_post_id ) {
                $daft_agent_id = get_post_meta( $agent_post_id, 'REAL_HOMES_agent_id_daft', true );
                if ( ! $daft_agent_id ) {
                   continue;
                }
-               $saleAdElement->appendChild( $XML->createElement( 'agent_id', $daft_agent_id ) );
+              // $saleAdElement->appendChild( $XML->createElement( 'agent_id', $daft_agent_id ) );
 
                // phone1, phone2
                $agent_phone_1_meta = get_post_meta( $agent_post_id, 'REAL_HOMES_mobile_number', true );
@@ -150,7 +150,13 @@ class MSIDaft {
                   $saleAdElement->appendChild( $XML->createElement( 'main_email', $main_email_meta ) );
                }
             }
+			
 
+			// agent for DAFT.IE 
+			$agent_daft_id = get_post_meta( $post_id, 'REAL_HOMES_property_agent_id_daft', true );
+			 if ( $agent_daft_id ) {
+				 $saleAdElement->appendChild( $XML->createElement( 'agent_id', $agent_daft_id ) );
+			 }
             // external_id
             $external_id_meta = get_post_meta( $post_id, 'REAL_HOMES_property_id', true );
             if ( $external_id_meta ) {
