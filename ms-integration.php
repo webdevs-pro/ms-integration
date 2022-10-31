@@ -184,10 +184,6 @@ class MS_Integration {
 
       include( 'myhome.php' );
       MSIMyHome::update_service( (array) $post_ids, $action );
-
-      add_action( 'admin_footer', function() {
-         error_log( "BOOM" );
-      }, 999 );
    }
 
 
