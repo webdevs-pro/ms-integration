@@ -483,11 +483,31 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       )
    );
 
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      5,
+      array(
+         'id' => 'REAL_HOMES_property_agent_id_daft',
+         'name' => 'Agent ID (for daft.ie)',
+         'type' => 'select',
+         // 'std' => 'thumb-on-right',
+         'options' => array(
+            '7569' => 'Ray Cooke Auctioneers Clondalkin',
+            '10947' => 'Ray Cooke Auctioneers Finglas',
+            '10948' => 'Ray Cooke Auctioneers Tallaght',
+            '10949' => 'Ray Cooke Auctioneers Terenure',
+            '10994' => 'Ray Cooke Lettings',
+         ),
+         'columns' => '6',
+         'tab' => 'details',
+      )
+   );
+
 
 
    $property_metabox_fields = ms_array_insert(
       $property_metabox_fields,
-      5,
+      6,
       array(
          'type' => 'divider',
          'columns' => '12',
