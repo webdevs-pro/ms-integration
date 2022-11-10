@@ -75,7 +75,9 @@ class MSIMyHome {
       $content = str_replace( "</ul><br>", '</ul>', $content );
       $content = str_replace( '"', "'", $content );
       $content = strip_tags( $content, '<div><span><br><b><strong><ul><ol><li><i><u>' );
-
+	  
+	$prop_comp_meta_value = get_post_meta( $post_id, 'REAL_HOMES_property_companygroup_myhome', true );
+	$prop_comp_arr =  explode ("|", $prop_comp_meta_value); 
       return array(
          'description' => strtok( $content, '.' ),
          'status' => $status,
@@ -93,8 +95,11 @@ class MSIMyHome {
          'class' => get_post_meta( $post_id, 'REAL_HOMES_property_class_myhome', true ),
          'type' => get_post_meta( $post_id, 'REAL_HOMES_property_type', true ),
          'sale_type' => get_post_meta( $post_id, 'REAL_HOMES_property_sale_type_myhome', true ),
-         'content' => $content
+         'content' => $content,
+         'comp_group_name' => $prop_comp_arr[0],
+         'comp_group_id' => $prop_comp_arr[1],
       );
+
    }
 
 
@@ -162,8 +167,8 @@ class MSIMyHome {
                "Prop_Bathrooms": "' . $property_data['bathrooms'] . '",
                "Prop_Bedrooms": "' . $property_data['bedrooms'] . '",
                "Prop_Class": "' . $property_data['class'] . '",
-               "Prop_CompanyGroup": "' . self::$company_group . '",
-               "Prop_CompanyName": "' . self::$company_name . '",
+               "Prop_CompanyGroup": "' . $property_data['comp_group_id'] . '",
+               "Prop_CompanyName": "' . $property_data['comp_group_name'] . '",
                "Prop_Eircode": "' . $property_data['eircode'] . '",
                "Prop_FullDescription": "' . $property_data['content'] . '",
                "Prop_Price": "' . $property_data['price'] . '",
@@ -179,7 +184,7 @@ class MSIMyHome {
       ) );
 
       self::process_attachments( $property_data, $post_id );
-
+      // error_log( "property_data\n" . print_r( $property_data, true ) . "\n" );
       error_log( "publish response\n" . print_r( $response['body'], true ) . "\n" );
    }
 
@@ -208,8 +213,8 @@ class MSIMyHome {
                "Prop_Bathrooms": "' . $property_data['bathrooms'] . '",
                "Prop_Bedrooms": "' . $property_data['bedrooms'] . '",
                "Prop_Class": "' . $property_data['class'] . '",
-               "Prop_CompanyGroup": "' . self::$company_group . '",
-               "Prop_CompanyName": "' . self::$company_name . '",
+               "Prop_CompanyGroup": "' . $property_data['comp_group_id'] . '",
+               "Prop_CompanyName": "' . $property_data['comp_group_name'] . '",
                "Prop_Eircode": "' . $property_data['eircode'] . '",
                "Prop_FullDescription": "' . $property_data['content'] . '",
                "Prop_Price": "' . $property_data['price'] . '",
