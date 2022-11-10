@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: MS Integration
- * Version: 0.5.2
+ * Version: 0.5.3
  */
 
 
@@ -180,7 +180,7 @@ class MS_Integration {
     */
    public function update_properties_on_services( $post_ids, $action ) {
       include( 'daft.php' );
-      MSIDaft::update_service( (array) $post_ids );
+//       MSIDaft::update_service( (array) $post_ids );
 
       include( 'myhome.php' );
       MSIMyHome::update_service( (array) $post_ids, $action );
@@ -379,65 +379,6 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       $property_metabox_fields,
       0,
       array(
-         'id' => 'REAL_HOMES_property_sale_type_daft',
-         'name' => 'Sale type (for daft.ie)',
-         'type' => 'select',
-         'options' => array(
-            'private-treaty' => 'Private',
-            'auction' => 'Auction',
-            'tender' => 'Tender',
-         ),
-         'columns' => '6',
-         'tab' => 'details',
-      )
-   );
-
-   $property_metabox_fields = ms_array_insert(
-      $property_metabox_fields,
-      1,
-      array(
-         'id' => 'REAL_HOMES_property_sale_type_myhome',
-         'name' => 'Sale type (for myhome.ie)',
-         'type' => 'select',
-         'desc' => 'Determines the type of sale. Not mandatory when property class is Lettings. Residencial = [Private, Auction], Commercial = [For Sale, To Let, For Auction, For Tender], Overseas = [New - Just Built, Off]',
-         'options' => array(
-            'Private' => 'Private',
-            'Auction' => 'Auction',
-            'For Sale' => 'For Sale',
-            'For Auction' => 'For Auction',
-            'For Tender' => 'For Tender',
-            'New - Just Built' => 'New - Just Built',
-            'Off' => 'Off',
-            '' => 'None'
-         ),
-         'columns' => '6',
-         'tab' => 'details',
-      )
-   );
-
-   $property_metabox_fields = ms_array_insert(
-      $property_metabox_fields,
-      2,
-      array(
-         'id' => 'REAL_HOMES_property_class_myhome',
-         'name' => 'Property class (for myhome.ie)',
-         'type' => 'select',
-         'options' => array(
-            'Residential' => 'Residential',
-            'NewHomes' => 'NewHomes',
-            'Lettings' => 'Lettings',
-            'Commercial' => 'Commercial',
-            'Overseas' => 'Overseas',
-         ),
-         'columns' => '6',
-         'tab' => 'details',
-      )
-   );
-
-   $property_metabox_fields = ms_array_insert(
-      $property_metabox_fields,
-      3,
-      array(
          'id' => 'REAL_HOMES_property_type',
          'name' => 'Property type',
          'type' => 'select',
@@ -453,13 +394,48 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
          'tab' => 'details',
       )
    );
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      1,
+      array(
+         'type' => 'divider',
+         'columns' => '12',
+         'tab' => 'details',
+      )
+   );
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      2,
+      array(
+         'type' => 'custom_html',
+         'std'  => '<div style="font-size: 16px; font-weight: bold;">Daft Additional Data</div>',
+         'columns' => '12',
+         'tab' => 'details',
+      )
+   );
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      3,
+      array(
+         'id' => 'REAL_HOMES_property_sale_type_daft',
+         'name' => 'Sale type',
+         'type' => 'select',
+         'options' => array(
+            'private-treaty' => 'Private',
+            'auction' => 'Auction',
+            'tender' => 'Tender',
+         ),
+         'columns' => '6',
+         'tab' => 'details',
+      )
+   );
 
    $property_metabox_fields = ms_array_insert(
       $property_metabox_fields,
       4,
       array(
          'id' => 'REAL_HOMES_property_house_type_daft',
-         'name' => 'House type (for daft.ie)',
+         'name' => 'House type',
          'type' => 'select',
          // 'std' => 'thumb-on-right',
          'options' => array(
@@ -479,12 +455,13 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       )
    );
 
+
    $property_metabox_fields = ms_array_insert(
       $property_metabox_fields,
       5,
       array(
          'id' => 'REAL_HOMES_property_agent_id_daft',
-         'name' => 'Agent ID (for daft.ie)',
+         'name' => 'Account ID',
          'type' => 'select',
          // 'std' => 'thumb-on-right',
          'options' => array(
@@ -498,19 +475,97 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
          'tab' => 'details',
       )
    );
-
-
-
    $property_metabox_fields = ms_array_insert(
       $property_metabox_fields,
       6,
       array(
          'type' => 'divider',
          'columns' => '12',
-         'id' => 'ms-divider-01',
          'tab' => 'details',
       )
    );
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      7,
+      array(
+         'type' => 'custom_html',
+         'std'  => '<div style="font-size: 16px; font-weight: bold;">MyHome Additional Data</div>',
+         'columns' => '12',
+         'tab' => 'details',
+      )
+   );
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      8,
+      array(
+         'id' => 'REAL_HOMES_property_sale_type_myhome',
+         'name' => 'Sale type',
+         'type' => 'select',
+         'desc' => 'Determines the type of sale. Not mandatory when property class is Lettings. Residencial = [Private, Auction], Commercial = [For Sale, To Let, For Auction, For Tender], Overseas = [New - Just Built, Off]',
+         'options' => array(
+            'Private' => 'Private',
+            'Auction' => 'Auction',
+            'For Sale' => 'For Sale',
+            'For Auction' => 'For Auction',
+            'For Tender' => 'For Tender',
+            'New - Just Built' => 'New - Just Built',
+            'Off' => 'Off',
+            '' => 'None'
+         ),
+         'columns' => '6',
+         'tab' => 'details',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      9,
+      array(
+         'id' => 'REAL_HOMES_property_class_myhome',
+         'name' => 'Property class',
+         'type' => 'select',
+         'options' => array(
+            'Residential' => 'Residential',
+            'NewHomes' => 'NewHomes',
+            'Lettings' => 'Lettings',
+            'Commercial' => 'Commercial',
+            'Overseas' => 'Overseas',
+         ),
+         'columns' => '6',
+         'tab' => 'details',
+      )
+   );
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      10,
+      array(
+         'id' => 'REAL_HOMES_property_companygroup_myhome',
+         'name' => 'Account',
+         'type' => 'select',
+         'options' => array(
+            'Ray Cooke Auctioneers Clondalkin|7031' => 'Ray Cooke Auctioneers Clondalkin',
+            'Ray Cooke Auctioneers Terenure|369224' => 'Ray Cooke Auctioneers Terenure',
+            'Ray Cooke Auctioneers Tallaght|254910' => 'Ray Cooke Auctioneers Tallaght',
+            'Ray Cooke Auctioneers Finglas|386630' => 'Ray Cooke Auctioneers Finglas',
+            'Ray Cooke Test|387583' => 'Ray Cooke Test',
+         ),
+         'columns' => '6',
+         'tab' => 'details',
+      )
+   );
+
+   $property_metabox_fields = ms_array_insert(
+      $property_metabox_fields,
+      11,
+      array(
+         'type' => 'divider',
+         'columns' => '12',
+         'tab' => 'details',
+		    'id' => 'ms-divider-01',
+      )
+   );
+
+
 
    $REAL_HOMES_property_address_key_position = intval( array_search( 'REAL_HOMES_property_address', array_column( $property_metabox_fields, 'id' ) ) );
 
@@ -519,7 +574,7 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       $REAL_HOMES_property_address_key_position + 1,
       array(
          'id' => 'REAL_HOMES_property_address_line_1',
-         'name' => 'Address line 1 (street)',
+         'name' => 'Address line 1 (street) (for myhome.ie)',
          'type' => 'text',
          'columns' => '6',
          'tab' => 'map-location',
@@ -531,7 +586,7 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       $REAL_HOMES_property_address_key_position + 2,
       array(
          'id' => 'REAL_HOMES_property_address_line_2',
-         'name' => 'Address line 2 (area)',
+         'name' => 'Address line 2 (area) (for myhome.ie)',
          'type' => 'text',
          'columns' => '6',
          'tab' => 'map-location',
@@ -543,7 +598,7 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       $REAL_HOMES_property_address_key_position + 3,
       array(
          'id' => 'REAL_HOMES_property_address_line_3',
-         'name' => 'Address line 3 (county)',
+         'name' => 'Address line 3 (county) (for myhome.ie)',
          'type' => 'text',
          'columns' => '6',
          'tab' => 'map-location',
@@ -555,7 +610,7 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       $REAL_HOMES_property_address_key_position + 4,
       array(
          'id' => 'REAL_HOMES_property_eircode',
-         'name' => 'Eircode',
+         'name' => 'Eircode (for myhome.ie)',
          'type' => 'text',
          'columns' => '6',
          'tab' => 'map-location',
@@ -615,7 +670,6 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
       array(
          'type' => 'divider',
          'columns' => '12',
-         'id' => 'ms-divider-02',
          'tab' => 'map-location',
       )
    );
@@ -623,28 +677,28 @@ add_filter( 'ere_property_metabox_fields', function( $property_metabox_fields ) 
    return $property_metabox_fields;
 }, 9999 );
 
-add_filter( 'ere_agent_meta_boxes', function( $agent_metabox_fields ) {
-   foreach ( $agent_metabox_fields as $index => $metabox ) {
-      if ( isset( $metabox['id'] ) && $metabox['id'] == 'agent-meta-box' ) {
+// add_filter( 'ere_agent_meta_boxes', function( $agent_metabox_fields ) {
+//    foreach ( $agent_metabox_fields as $index => $metabox ) {
+//       if ( isset( $metabox['id'] ) && $metabox['id'] == 'agent-meta-box' ) {
 
-         $general_tab = array(
-            'label' => 'General',
-            'icon' => 'dashicons-admin-generic'
-         );
-         ms_array_unshift_assoc( $agent_metabox_fields[$index]['tabs'], 'general', $general_tab );
+//          $general_tab = array(
+//             'label' => 'General',
+//             'icon' => 'dashicons-admin-generic'
+//          );
+//          ms_array_unshift_assoc( $agent_metabox_fields[$index]['tabs'], 'general', $general_tab );
 
-         $agent_id_field = array(
-            'id' => 'REAL_HOMES_agent_id_daft',
-            'name' => 'Agent ID (for daft.ie)',
-            'type' => 'text',
-            'columns' => '12',
-            'tab' => 'general',
-         );
-         array_unshift( $agent_metabox_fields[$index]['fields'], $agent_id_field );
-      }
-   }
-   return $agent_metabox_fields;
-}, 9999 );
+//          $agent_id_field = array(
+//             'id' => 'REAL_HOMES_agent_id_daft',
+//             'name' => 'Agent ID (for daft.ie)',
+//             'type' => 'text',
+//             'columns' => '12',
+//             'tab' => 'general',
+//          );
+//          array_unshift( $agent_metabox_fields[$index]['fields'], $agent_id_field );
+//       }
+//    }
+//    return $agent_metabox_fields;
+// }, 9999 );
 
 function ms_array_unshift_assoc( &$arr, $key, $val ) {
    $arr = array_reverse( $arr, true );
