@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: MS Integration
+ * Plugin Name: RealHomes DAFT and MyHome Integration
  * Version: 0.6.0
  */
 
