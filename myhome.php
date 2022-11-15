@@ -6,9 +6,9 @@
 
 class MSIMyHome {
 
-   private static $api_url = 'https://s-feedin.myhome.ie/v2/';
-   private static $company_group = '387583';
-   private static $company_name = 'Ray Cooke Test';
+   private static $api_url = 'https://feedin.myhome.ie/v2/';
+   private static $company_group;
+   private static $company_name;
 
    public static function update_service( $post_ids = [], $action = '' ) {
       $service_properties = self::get_properties_from_service();
@@ -16,6 +16,11 @@ class MSIMyHome {
       foreach ( $post_ids as $post_id ) {
 
          $ref_id = get_post_meta( $post_id, 'REAL_HOMES_property_id', true );
+
+         $prop_comp_meta_value = get_post_meta( $post_id, 'REAL_HOMES_property_companygroup_myhome', true );
+         $prop_comp_arr =  explode ( "|", $prop_comp_meta_value ); 
+         self::$company_group = $prop_comp_arr[1];
+         self::$company_name = $prop_comp_arr[0];
 
          if ( in_array( $ref_id, $service_properties ) ) {
             self::update_property( $post_id, $action );
@@ -76,8 +81,6 @@ class MSIMyHome {
       $content = str_replace( '"', "'", $content );
       $content = strip_tags( $content, '<div><span><br><b><strong><ul><ol><li><i><u>' );
 	  
-	$prop_comp_meta_value = get_post_meta( $post_id, 'REAL_HOMES_property_companygroup_myhome', true );
-	$prop_comp_arr =  explode ("|", $prop_comp_meta_value); 
       return array(
          'description' => strtok( $content, '.' ),
          'status' => $status,
@@ -96,8 +99,8 @@ class MSIMyHome {
          'type' => get_post_meta( $post_id, 'REAL_HOMES_property_type', true ),
          'sale_type' => get_post_meta( $post_id, 'REAL_HOMES_property_sale_type_myhome', true ),
          'content' => $content,
-         'comp_group_name' => $prop_comp_arr[0],
-         'comp_group_id' => $prop_comp_arr[1],
+         'comp_group_name' => self::$company_name,
+         'comp_group_id' => self::$company_group,
       );
 
    }
@@ -167,8 +170,8 @@ class MSIMyHome {
                "Prop_Bathrooms": "' . $property_data['bathrooms'] . '",
                "Prop_Bedrooms": "' . $property_data['bedrooms'] . '",
                "Prop_Class": "' . $property_data['class'] . '",
-               "Prop_CompanyGroup": "' . $property_data['comp_group_id'] . '",
-               "Prop_CompanyName": "' . $property_data['comp_group_name'] . '",
+               "Prop_CompanyGroup": "' . self::$company_group . '",
+               "Prop_CompanyName": "' . self::$company_name . '",
                "Prop_Eircode": "' . $property_data['eircode'] . '",
                "Prop_FullDescription": "' . $property_data['content'] . '",
                "Prop_Price": "' . $property_data['price'] . '",
@@ -213,8 +216,8 @@ class MSIMyHome {
                "Prop_Bathrooms": "' . $property_data['bathrooms'] . '",
                "Prop_Bedrooms": "' . $property_data['bedrooms'] . '",
                "Prop_Class": "' . $property_data['class'] . '",
-               "Prop_CompanyGroup": "' . $property_data['comp_group_id'] . '",
-               "Prop_CompanyName": "' . $property_data['comp_group_name'] . '",
+               "Prop_CompanyGroup": "' . self::$company_group . '",
+               "Prop_CompanyName": "' . self::$company_name . '",
                "Prop_Eircode": "' . $property_data['eircode'] . '",
                "Prop_FullDescription": "' . $property_data['content'] . '",
                "Prop_Price": "' . $property_data['price'] . '",
@@ -281,15 +284,15 @@ class MSIMyHome {
    }
 
    private static function get_new_token() {
-      $url = 'https://s-identity.myhome.ie/connect/token';
+      $url = 'https://identity.myhome.ie/connect/token';
 
       $request = wp_remote_post( $url, array(
          'body' => array(
             'grant_type' => 'password',
             'client_id' => 'feedin-provider',
             'client_secret' => '6b0a19fe',
-            'username' => 'property-provider-test',
-            'password' => 'd8SZMk.h$',
+            'username' => 'property-provider-cdgbrand',
+            'password' => 'Mp6a4Rm#G7',
          )
       ) );
 
