@@ -11,16 +11,16 @@ class MSIMyHome {
    private static $company_name;
 
    public static function update_service( $post_ids = [], $action = '' ) {
-      $service_properties = self::get_properties_from_service();
-
       foreach ( $post_ids as $post_id ) {
-
          $ref_id = get_post_meta( $post_id, 'REAL_HOMES_property_id', true );
-
          $prop_comp_meta_value = get_post_meta( $post_id, 'REAL_HOMES_property_companygroup_myhome', true );
-         $prop_comp_arr =  explode ( "|", $prop_comp_meta_value ); 
+         $prop_comp_arr = explode( "|", $prop_comp_meta_value ); 
+         
          self::$company_group = $prop_comp_arr[1];
          self::$company_name = $prop_comp_arr[0];
+         
+         $service_properties = self::get_properties_from_service();
+         // error_log( "service_properties\n" . print_r( $service_properties, true ) . "\n" );
 
          if ( in_array( $ref_id, $service_properties ) ) {
             self::update_property( $post_id, $action );
@@ -74,8 +74,10 @@ class MSIMyHome {
       $content = preg_replace('/(<[^>]+) style=".*?"/i', '$1', $content );
       $content = preg_replace('#\[[^\]]+\]#', '', $content );
       $content = str_replace( ["\n", "\r"], '<br>', $content );
-      $content = str_replace( ["<br><br><br><br>", "<br><br><br>", "<br><br>"], '<br>', $content );
-      $content = str_replace( ["\n", "\r", "\t", "</li><br>", "&nbsp;", "/li&gt;"], '', $content );
+      // $content = str_replace( ["<br><br><br><br>", "<br><br><br>", "<br><br>"], '<br>', $content );
+      $content = str_replace( ["<br><br><br><br>", "<br><br><br>", "<br><br>"], "\r\n", $content );
+      // $content = str_replace( ["\n", "\r", "\t", "</li><br>", "&nbsp;", "/li&gt;"], '', $content );
+      $content = str_replace( [ "\t", "</li><br>", "&nbsp;", "/li&gt;"], '', $content );
       $content = str_replace( "<ul><br>", '<ul>', $content );
       $content = str_replace( "</ul><br>", '</ul>', $content );
       $content = str_replace( '"', "'", $content );
@@ -144,7 +146,7 @@ class MSIMyHome {
          'body' => $json,
       ) );
 
-      error_log( "media response\n" . print_r( $response, true ) . "\n" );
+      // error_log( "media response\n" . print_r( $response, true ) . "\n" );
 
    }
 
@@ -188,7 +190,7 @@ class MSIMyHome {
 
       self::process_attachments( $property_data, $post_id );
       // error_log( "property_data\n" . print_r( $property_data, true ) . "\n" );
-      error_log( "publish response\n" . print_r( $response['body'], true ) . "\n" );
+      // error_log( "publish response\n" . print_r( $response['body'], true ) . "\n" );
    }
 
 
@@ -200,7 +202,6 @@ class MSIMyHome {
    public static function update_property( $post_id, $action = '' ) {
       $token = self::get_token();
       $property_data = self::get_property_data( $post_id );
-
       $response = wp_remote_request( self::$api_url . 'property/' . $property_data['ref_id'], array(
          'method' => 'PUT',
          'headers' => array(
@@ -234,13 +235,12 @@ class MSIMyHome {
 
       self::process_attachments( $property_data, $post_id );
 
-      error_log( "update response\n" . print_r( $response['body'], true ) . "\n" );
+      // error_log( "update response\n" . print_r( $action, true ) . "\n" );
    }
 
 
 
    private static function get_properties_from_service() {
-
       $token = self::get_token();
 
       $response = wp_remote_get( self::$api_url . 'properties/' . self::$company_group, array(
@@ -251,9 +251,14 @@ class MSIMyHome {
          )
       ) );
 
+      // error_log( "гкд\n" . print_r( self::$api_url . 'properties/' . self::$company_group, true ) . "\n" );
+      // error_log( "response\n" . print_r( $response, true ) . "\n" );
+
       if ( ! is_wp_error( $response ) ) {
 
          $response_arr = json_decode( wp_remote_retrieve_body( $response ) );
+
+         // error_log( "response_arr\n" . print_r( $response_arr, true ) . "\n" );
 
          if ( isset( $response_arr->Properties ) ) {
             // error_log( "response_arr\n" . print_r( array_column( $response_arr->Properties, 'Prop_RefId' ), true ) . "\n" );
